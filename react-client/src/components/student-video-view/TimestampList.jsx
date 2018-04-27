@@ -14,19 +14,20 @@ class TimestampList extends React.Component {
   render() {
     return (
       <div>
-        <ul>
+        <div>
+          {console.log(this.props.timestamps)}
           {this.props.timestamps.map((timestamp, index) => {
             return <TimestampListEntry 
             key={index} 
             timestamp={timestamp} 
             changeVideo={this.props.changeVideo} 
-            deleteTimestamp={this.props.deleteTimestamp}/>
+            deleteTimestamp={this.props.deleteTimestamp}
+            userId={this.props.userId}/>
           })}
-        </ul>
+        </div>
       </div>
     );
   }
-
 }
 
 export default TimestampList;
