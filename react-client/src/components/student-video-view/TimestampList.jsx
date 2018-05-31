@@ -13,20 +13,30 @@ class TimestampList extends React.Component {
   
   render() {
     return (
-      <div>
-        <ul>
+      <div style={msgContainerStyle}>
+          <div style={overflowStyle}>
           {this.props.timestamps.map((timestamp, index) => {
             return <TimestampListEntry 
             key={index} 
             timestamp={timestamp} 
             changeVideo={this.props.changeVideo} 
-            deleteTimestamp={this.props.deleteTimestamp}/>
+            deleteTimestamp={this.props.deleteTimestamp}
+            userId={this.props.userId}/>
           })}
-        </ul>
+        </div>
       </div>
     );
   }
-
 }
+const msgContainerStyle = {
+  border: "1px black solid",
+  height: "60vh",
+};
+
+
+const overflowStyle = {
+  overflowY: "auto",
+  height: "100%",
+};
 
 export default TimestampList;

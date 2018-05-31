@@ -1,7 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 
+import RaisedButton from 'material-ui/RaisedButton';
 import YouTube from 'react-youtube';
+import Paper from 'material-ui/Paper';
+import TeacherComments from './TeacherComments.jsx';
+import CommentSlider from './CommentSlider.jsx';
+import Auth from '../../utils/auth.js';
+
 
 class OwnerVideoPlayer extends React.Component {
   constructor(props) {
@@ -9,13 +15,14 @@ class OwnerVideoPlayer extends React.Component {
 
     this.state = { 
       videoId: this.props.videoId,
-      player: null
+      video: this.props.video,
+      player: null,
     };
 
     this.onReady = this.onReady.bind(this);
     this.onPlayVideo = this.onPlayVideo.bind(this);
     this.onPauseVideo = this.onPauseVideo.bind(this);
-    this.saveTimeStamp = this.saveTimeStamp.bind(this);
+    this.deleteComment = this.deleteComment.bind(this);
   }
 
   onReady(event) {
@@ -32,37 +39,57 @@ class OwnerVideoPlayer extends React.Component {
     this.state.player.pauseVideo();
   }
 
-
-  saveTimeStamp() {
-    const timestamp = Math.floor(this.state.player.getCurrentTime());
-    this.props.saveTimeStamp(timestamp);
+  deleteComment(comment) {
+    axios.delete('/owner/comment', {params: {comment: comment}})
+    .then(() => {
+      this.props.getComments();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
-
+  
   render() {
     const opts = {
       height: '390',
-      width: '640',
-      playerVars: { // https://developers.google.com/youtube/player_parameters
+      width: '500',
+      playerVars: {
         autoplay: 1,
         start: this.props.startingTimestamp,
-      }
+      },
     };
 
     return (
       <div>
-        <YouTube
-          videoId={this.state.videoId}
-          opts={opts}
-          onReady={this.onReady}
-        />
-        <button onClick={this.onPlayVideo}>Play</button>
-        <button onClick={this.onPauseVideo}>Pause</button>
-        {/* <button onClick={this.onChangeVideo}>Change Video</button> */}
-        {/* <button onClick={this.saveTimeStamp}>Confused</button> */}
+        <div>
+          <YouTube
+            videoId={this.state.videoId}
+            opts={opts}
+            onReady={this.onReady}
+          />
+        </div>
+        <div>
+          <RaisedButton 
+            style={{margin: '5px'}} 
+            onClick={this.onPlayVideo}  
+            label="Play"/>
+          <RaisedButton 
+            style={{margin: '5px'}} 
+            onClick={this.onPauseVideo} 
+            label="Pause"/>
+          <RaisedButton 
+            style={{margin: '5px'}} 
+            label={this.props.showCommentForm ? 'Hide Form' : 'Add Comment'}
+            onClick={this.props.toggleCommentForm}
+            />
+        </div>
+        <br/>
+        <Paper>
+          <TeacherComments comments={this.props.comments} deleteComment={this.deleteComment}/>
+        </Paper>
       </div>
     );
   }
-
 }
 
 export default OwnerVideoPlayer;
